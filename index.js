@@ -1,9 +1,12 @@
 const swaggerUi = require('swagger-ui-express');
 const docs = require('./swagger'); // import the docs object from swagger.js
+const cors = require('cors');
 
 //require express
 const express = require('express');
 const app = express();
+app.use(cors());
+
 
 
 // body-parser middleware takes the data from the HTTP request body and puts it into the req.body object

@@ -63,6 +63,7 @@ async function register(req , res){
         token
       });
     } catch(error) {
+      console.log("error here");
       res.status(400).json({error : error.message})
     }
   }

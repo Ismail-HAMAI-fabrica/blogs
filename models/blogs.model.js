@@ -8,10 +8,12 @@ const { Schema } = mongoose;
 const blogPostSchema = new Schema({
   user_id: { type:ObjectId,required:true },
 
+  username: { type: String},
+
   title: { type: String, required: true },
 
   content: { type: String, required: true },
-  
+
   date_added: { type: Date, default: Date.now }
 });
 

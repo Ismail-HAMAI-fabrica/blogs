@@ -57,11 +57,11 @@ userSchema.statics.login = async function(email , password){
 
 //static signup method
 
-userSchema.statics.signup = async function(email , password , role) {
+userSchema.statics.signup = async function(email , password , username) {
 
     //validtion
 
-    if (!email || !password || !role){
+    if (!email || !password || !username){
 
         throw Error('all fields are required !')
     }
@@ -86,7 +86,7 @@ userSchema.statics.signup = async function(email , password , role) {
     const salt =await bcrypt.genSalt(10)
     const hash = await bcrypt.hash(password , salt)
 
-    const user = await this.create({email , password : hash , role})
+    const user = await this.create({email , password : hash , username})
 
     return user.toObject({ getters: true, versionKey: false, transform: function (doc, ret) {
         delete ret.password;

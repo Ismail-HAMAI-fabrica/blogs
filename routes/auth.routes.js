@@ -10,4 +10,7 @@ authRouter.post('/login', controller.login);
 authRouter.delete('/delete/user/:id',controller.deleteUser);
 
 
+
+
+
 module.exports = authRouter;

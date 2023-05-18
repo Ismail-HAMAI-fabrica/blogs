@@ -1,22 +1,45 @@
-import express from 'express';
-import BlogPost from '../models/BlogPost.js';
+// Import dependencies
+const BlogPost = require('../models/blogs.model');
+const express = require('express');
+const User = require('../models/user.model');
 
-const router = express.Router();
+const blogRouter = express.Router();
 
-// Create a new blog post
-router.post('/', async (req, res) => {
+
+// Set up multer upload configuration
+blogRouter.post('/addblogs', async (req, res)  => {
   try {
-    const { user_id, title, content } = req.body;
-    const blogPost = new BlogPost({ user_id, title, content });
-    await blogPost.save();
-    res.status(201).json(blogPost);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+
+    const user_id = req.user.id
+    // Extract the necessary data from the request body
+    const user = await User.findById(user_id);
+
+    const username =  user.username;
+
+    const {title , content , } = req.body;
+    console.log(user_id);
+    // Create a new instance of the BlogPost model with the provided data
+    const newBlogPost = new BlogPost({
+      user_id,
+      title,
+      content,
+      username
+    });
+
+    // Save the new blog post to the database
+    const savedBlogPost = await newBlogPost.save();
+
+    // Return the saved blog post in the response
+    res.json(savedBlogPost);
+  } catch (error) {
+    // Handle any errors that occur during the saving process
+    res.status(500).json({ error: 'An error occurred while creating the blog post.' });
   }
 });
 
+
 // Get all blog posts
-router.get('/', async (req, res) => {
+blogRouter.get('/allblogs', async (req, res) => {
   try {
     const blogPosts = await BlogPost.find();
     res.json(blogPosts);
@@ -26,12 +49,12 @@ router.get('/', async (req, res) => {
 });
 
 // Get a single blog post by ID
-router.get('/:id', getBlogPost, (req, res) => {
+blogRouter.get('/blogs/:id', getBlogPost, (req, res) => {
   res.json(res.blogPost);
 });
 
 // Update a blog post by ID
-router.patch('/:id', getBlogPost, async (req, res) => {
+blogRouter.patch('/udateblog/:id', getBlogPost, async (req, res) => {
   if (req.body.user_id != null) {
     res.blogPost.user_id = req.body.user_id;
   }
@@ -50,7 +73,7 @@ router.patch('/:id', getBlogPost, async (req, res) => {
 });
 
 // Delete a blog post by ID
-router.delete('/:id', getBlogPost, async (req, res) => {
+blogRouter.delete('/deleteblogs/:id', getBlogPost, async (req, res) => {
   try {
     await res.blogPost.remove();
     res.json({ message: 'Blog post deleted' });
@@ -73,4 +96,4 @@ async function getBlogPost(req, res, next) {
   }
 }
 
-export default router;
+module.exports = blogRouter;
